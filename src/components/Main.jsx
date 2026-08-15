@@ -1,16 +1,19 @@
 import React from "react"
 import ClaudeRecipe from "./ClaudeRecipe"
 import IngredientsList from "./IngredientsList"
+import { getRecipeFromMistral } from "../ai"
 
 export default function Main() {
 
     const [ingredients, setIngredients] = React.useState(
-      []
+      ["chicken", "oregano", "all the spices", "pasta"]
     )
-    const [recipeShown, setRecipeShown] = React.useState(false)
+    const [recipe, setRecipe] = React.useState("")
     
-    function toggleRecipeShown() {
-        setRecipeShown(prevShown => !prevShown)
+    async function getRecipe() {
+        console.log(import.meta.env.VITE_HF_API_KEY?.slice(0, 10))
+        const resultRecipe = await getRecipeFromMistral(ingredients)
+        setRecipe(resultRecipe)
     }
 
     function addIngredient(formData) {
@@ -31,10 +34,10 @@ export default function Main() {
             </form>
             
             {ingredients.length > 0 && 
-              <IngredientsList ingredients={ingredients} showRecipeButton={toggleRecipeShown} />
+              <IngredientsList ingredients={ingredients} getRecipeButton={getRecipe} />
             }
             
-            {recipeShown && <ClaudeRecipe />}
+            {recipe != "" && <ClaudeRecipe recipe={recipe} />}
         </main>
     )
 }
