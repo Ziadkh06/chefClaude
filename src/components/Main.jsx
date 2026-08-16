@@ -9,7 +9,14 @@ export default function Main() {
       ["chicken", "oregano", "all the spices", "pasta"]
     )
     const [recipe, setRecipe] = React.useState("")
-    
+    const recipeSection = React.useRef(null)
+
+    React.useEffect(() => {
+        if (recipe !== "" && recipeSection.current !== null) {
+            recipeSection.current.scrollIntoView({behavior: "smooth"})
+        }
+    }, [recipe])
+
     async function getRecipe() {
         console.log(import.meta.env.VITE_HF_API_KEY?.slice(0, 10))
         const resultRecipe = await getRecipeFromMistral(ingredients)
@@ -34,7 +41,7 @@ export default function Main() {
             </form>
             
             {ingredients.length > 0 && 
-              <IngredientsList ingredients={ingredients} getRecipeButton={getRecipe} />
+              <IngredientsList ingredients={ingredients} getRecipeButton={getRecipe} recipeSection={recipeSection} />
             }
             
             {recipe != "" && <ClaudeRecipe recipe={recipe} />}
